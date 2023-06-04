@@ -5,7 +5,8 @@ require('dotenv/config')
 require('colors')
 const data = require('./data/data');
 const connectDB = require('./config/db');
-const userRoutes = require('./ROUTES/userRoutes');
+const userRoutes = require('./ROUTES/user.routes');
+const chatRoutes = require('./ROUTES/chat.routes')
 const {notFound, errorHandler} = require('./MIDDLEWARES/error.middleware')
 
 connectDB();
@@ -17,12 +18,13 @@ app.get('/api/chat',(req,res) =>{
     res.send(data)
 })
 
-app.get('/api/chat/:id',(req,res)=> {
+app.get('/api/chat/:id', (req, res) => {
     const chat = data.find(chat => chat._id === req.params.id)
     res.send(chat)  
 }) 
 
-app.use('/api/user',userRoutes)
+app.use('/api/user', userRoutes);
+app.use('/api/chat', chatRoutes);
 
 app.use(notFound)
 app.use(errorHandler)
