@@ -3,8 +3,11 @@ const app = express();
 const cors = require('cors')
 require('dotenv/config')
 require('colors')
-const data = require('./data/data')
+const data = require('./data/data');
+const connectDB = require('./config/db');
 
+
+connectDB();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cors())
