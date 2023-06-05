@@ -14,15 +14,6 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cors())
 
-app.get('/api/chat',(req,res) =>{
-    res.send(data)
-})
-
-app.get('/api/chat/:id', (req, res) => {
-    const chat = data.find(chat => chat._id === req.params.id)
-    res.send(chat)  
-}) 
-
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
 
