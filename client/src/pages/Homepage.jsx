@@ -1,9 +1,15 @@
-import { Box,Container,Tab,TabList,TabPanel,TabPanels,Tabs,Text} from "@chakra-ui/react";
+import { Box, Container, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
 import { useEffect } from "react";
 import Login from "../components/Authentication/Login";
 import Signup from "../components/Authentication/Signup";
+import { useNavigate } from "react-router-dom";
 
 function Homepage() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("userInfo"));
+    if (user) navigate("/chats");
+  }, [navigate]);
 
   return (
     <Container maxW="xl" centerContent>
@@ -17,7 +23,7 @@ function Homepage() {
         borderRadius="lg"
         borderWidth="1px"
       >
-        <Text fontSize="4xl" fontFamily="Work sans" >
+        <Text fontSize="4xl" fontFamily="Work sans">
           Talk-A-Tive
         </Text>
       </Box>

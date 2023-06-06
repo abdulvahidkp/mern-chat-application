@@ -67,7 +67,7 @@ const allUsers = asyncHandler(async(req,res)=>{
             {email:{$regex:req.query.search,$options:"i"}}
         ]
     } : {}
-    const users = await Users.find(keyword).find({_id:{$ne:req.user._id}});
+    const users = await Users.find(keyword,'-password').find({_id:{$ne:req.user._id}});
     res.status(200).json(users);
 })
 
