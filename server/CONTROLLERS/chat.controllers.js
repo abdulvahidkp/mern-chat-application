@@ -59,13 +59,11 @@ const fetchChats = asyncHandler(async (req, res) => {
       },
     })
     .sort({ updatedAt: -1 });
-  console.log("🚀 ~ file: chat.controllers.js:53 ~ fetchChats ~ chats:", chats);
   res.status(200).json(chats);
 });
 
 const creatGroupChat = asyncHandler(async (req, res) => {
   let { chatName, users } = req.body;
-  console.log("🚀 ~ file: chat.controllers.js:68 ~ creatGroupChat ~ users:", users);
   if (!chatName || !users) {
     res.status(400);
     throw new Error("Please Fill all the fields");

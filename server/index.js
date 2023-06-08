@@ -7,6 +7,7 @@ const data = require('./data/data');
 const connectDB = require('./config/db');
 const userRoutes = require('./ROUTES/user.routes');
 const chatRoutes = require('./ROUTES/chat.routes')
+const messageRoutes = require('./ROUTES/message.routes')
 const {notFound, errorHandler} = require('./MIDDLEWARES/error.middleware')
 
 connectDB();
@@ -16,6 +17,7 @@ app.use(cors())
 
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/message', messageRoutes);
 
 app.use(notFound)
 app.use(errorHandler)
