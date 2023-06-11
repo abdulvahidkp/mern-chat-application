@@ -22,7 +22,7 @@ import axios from "../../axios/axios";
 import useDebounce from "../../hooks/useDebounce";
 import UserListItem from "../UserAvatar/UserListItem";
 
-function UpdateGroupChatModal({ fetchAgain, setFetchAgain }) {
+function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
   const [chatName, setChatName] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [search, setSearch] = useState("");
@@ -126,7 +126,7 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain }) {
           const {data} = await axios.put('/api/chat/groupremove',{chatId:selectedChat._id,userId},config)
           user._id === userId ? setSelectedChat() : setSelectedChat(data)
           setFetchAgain(!fetchAgain)
-          
+          fetchMessages() ////////////////////////////////// here it is
     } catch (error) {
         toast({
             title: "Error Occured!",
