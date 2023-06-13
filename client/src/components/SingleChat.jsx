@@ -23,7 +23,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
   const [isTyping, setIsTyping] = useState(false)
   const [socketConnected, setSocketConnected]  = useState(false)
 
-  const { user, selectedChat, setSelectedChat } = ChatState();
+  const { user, selectedChat, setSelectedChat, notification, setNotification } = ChatState();
 
 
   const defaultOptions = {
@@ -51,12 +51,15 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
     socket.on('new message',newMessage => {
       if(!selectedCompare || selectedCompare._id !== newMessage.chat._id) {
         // notification
+        if(!notification.includes(newMessage)) {
+          setNotification([newMessage,...notification])
+          setFetchAgain(!fetchAgain)
+        }
       } else {
       	setMessages([...messages,newMessage]);
       }
     })
   });
-
 
   const fetchMessages = async () => {
     if (!selectedChat) return;

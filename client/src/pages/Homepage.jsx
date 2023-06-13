@@ -8,7 +8,7 @@ function Homepage() {
   const navigate = useNavigate();
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
-    if (user) navigate("/chats");
+    if (user) navigate("/chat");
   }, [navigate]);
 
   return (
