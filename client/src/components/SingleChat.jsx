@@ -8,15 +8,55 @@ import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import axios from "../axios/axios";
 import "./styles.css";
 import ScrollableChat from "./ScrollableChat";
+import io from 'socket.io-client'
+var socket,selectedCompare;
+let disableTypingIndicator;
+import Lottie from 'react-lottie'
+
+import animationData from '../animations/typing.json'
 
 function SingleChat({ fetchAgain, setFetchAgain }) {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
 
+  const [isTyping, setIsTyping] = useState(false)
+  const [socketConnected, setSocketConnected]  = useState(false)
+
   const { user, selectedChat, setSelectedChat } = ChatState();
 
+
+  const defaultOptions = {
+    loop:true,
+    autoplay:true,
+    animationData:animationData,
+    rendererSettings:{
+      preserveAspectRatio:"xMidYMid slice"
+    }
+  }
+
   const toast = useToast();
+
+  useEffect(()=>{
+    socket = io(import.meta.env.VITE_ENDPOINT)
+    socket.emit('setup',user)
+    socket.on('connected',()=>{
+      setSocketConnected(true)
+    })
+    socket.on('typing',()=>setIsTyping(true))
+    socket.on('stop typing',()=>setIsTyping(false))
+  },[])
+
+  useEffect(()=>{
+    socket.on('new message',newMessage => {
+      if(!selectedCompare || selectedCompare._id !== newMessage.chat._id) {
+        // notification
+      } else {
+      	setMessages([...messages,newMessage]);
+      }
+    })
+  });
+
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -29,6 +69,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
       setLoading(true);
       const { data } = await axios.get(`/api/message/${selectedChat._id}`, config);
       setMessages(data);
+      socket.emit('join room',selectedChat._id)
     } catch (error) {
       toast({
         title: "Error occured!",
@@ -45,11 +86,22 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
 
   useEffect(() => {
     fetchMessages();
+    setNewMessage('')
+    if(selectedCompare) socket.emit('leave room',selectedCompare?._id)
+    selectedCompare = selectedChat
   }, [selectedChat]);
 
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
     // typing indication
+    if(!socketConnected) return;
+    clearTimeout(disableTypingIndicator)
+    socket.emit('typing',selectedChat._id)
+
+    disableTypingIndicator = setTimeout(()=>{
+      socket.emit('stop typing',selectedChat._id)
+    },2000)
+    
   };
 
   const sendMessage = async (e) => {
@@ -63,6 +115,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
         };
 
         setNewMessage("");
+        socket.emit('stop typing',selectedChat._id)
         const { data } = await axios.post(
           "/api/message",
           {
@@ -72,6 +125,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
           config
         );
         setMessages([...messages, data]);
+        socket.emit('new message',data)
       } catch (error) {
         toast({
           title: "Error occured!",
@@ -139,6 +193,13 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
               </div>
             )}
             <FormControl onKeyDown={sendMessage} mt={3} isRequired>
+              {isTyping && <div>
+                  <Lottie 
+                    options={defaultOptions}
+                    width={70}
+                    style={{marginBotton:15, marginLeft:10}}
+                   />
+                </div>}
               <Input
                 variant="filled"
                 bg="#E0E0E0"

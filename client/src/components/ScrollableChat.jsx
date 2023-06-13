@@ -10,7 +10,7 @@ function ScrollableChat({ messages }) {
     <ScrollableFeed>
       {messages &&
         messages?.map((msg, index) => (
-          <div style={{ display: "flex" }}>
+          <div style={{ display: "flex" }} key={msg._id}>
             {isSameSender(messages, msg, index, user._id) && (
               <Tooltip label={msg.sender.name} placement="bottom-start" hasArrow>
                 <Avatar mt="7px" mr={1} size={"sm"} cursor="pointer" name={msg.sender.name} src={msg.sender.pic} />
